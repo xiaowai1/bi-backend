@@ -13,6 +13,7 @@ import com.cyj.bibackend.constant.UserConstant;
 import com.cyj.bibackend.exception.BusinessException;
 import com.cyj.bibackend.exception.ThrowUtils;
 import com.cyj.bibackend.manager.AiManager;
+import com.cyj.bibackend.manager.RedisLimiterManager;
 import com.cyj.bibackend.model.domain.Chart;
 import com.cyj.bibackend.model.domain.User;
 import com.cyj.bibackend.model.dto.chart.*;
@@ -54,10 +55,10 @@ public class ChartController {
 
     @Resource
     private AiManager aiManager;
-//
-//    @Resource
-//    private RedisLimiterManager redisLimiterManager;
-//
+
+    @Resource
+    private RedisLimiterManager redisLimiterManager;
+
     @Resource
     private ThreadPoolExecutor threadPoolExecutor;
 //
@@ -252,7 +253,7 @@ public class ChartController {
 
         User loginUser = userService.getLoginUser(request);
         // 限流判断，每个用户一个限流器
-//        redisLimiterManager.doRateLimit("genChartByAi_" + loginUser.getId());
+        redisLimiterManager.doRateLimit("genChartByAi_" + loginUser.getId());
         long biModelId = CommonConstant.BI_MODEL_ID;
         // 分析需求：
         // 分析网站用户的增长情况
@@ -328,10 +329,13 @@ public class ChartController {
         String suffix = FileUtil.getSuffix(originalFilename);
         final List<String> validFileSuffixList = Arrays.asList("xlsx", "xls");
         ThrowUtils.throwIf(!validFileSuffixList.contains(suffix), ErrorCode.PARAMS_ERROR, "文件后缀非法");
+        // TODO 校验文件的内容
+
+        // TODO 检验文件的合规性（比如敏感内容，可以用第三方的审核功能）
 
         User loginUser = userService.getLoginUser(request);
         // 限流判断，每个用户一个限流器
-//        redisLimiterManager.doRateLimit("genChartByAi_" + loginUser.getId());
+        redisLimiterManager.doRateLimit("genChartByAi_" + loginUser.getId());
         long biModelId = 1659171950288818178L;
         // 构造用户输入
         StringBuilder userInput = new StringBuilder();
@@ -480,6 +484,11 @@ public class ChartController {
 //    }
 
 
+    /**
+     * 更新图表状态失败处理
+     * @param chartId
+     * @param execMessage
+     */
     private void handleChartUpdateError(long chartId, String execMessage) {
         Chart updateChartResult = new Chart();
         updateChartResult.setId(chartId);
