@@ -13,7 +13,6 @@ import com.cyj.bibackend.common.ErrorCode;
 public class ThrowUtils {
     /**
      * 条件成立则抛异常
-     *
      * @param condition
      * @param runtimeException
      */
@@ -25,7 +24,6 @@ public class ThrowUtils {
 
     /**
      * 条件成立则抛异常
-     *
      * @param condition
      * @param errorCode
      */
@@ -35,7 +33,6 @@ public class ThrowUtils {
 
     /**
      * 条件成立则抛异常
-     *
      * @param condition
      * @param errorCode
      * @param message
