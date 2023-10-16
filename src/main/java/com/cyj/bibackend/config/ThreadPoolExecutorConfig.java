@@ -31,7 +31,7 @@ public class ThreadPoolExecutorConfig {
             }
         };
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(4, 4, 100, TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(4), threadFactory);
+                new ArrayBlockingQueue<>(20), threadFactory);
         return threadPoolExecutor;
     }
 }
